@@ -1,12 +1,13 @@
 {% extends 'base.html.twig' %}
 
     
-{% block title %}General Template of Daily Plan{% endblock %}
+{% block title %}Daily Plan{% endblock %}
  
 {% block stylesheets %}
     <!-- Bootstrap -->
     <link href="{{asset('styles/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('styles/css/main.css')}}" rel="stylesheet">
+    <link href="{{asset('styles/main.css')}}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -20,20 +21,31 @@
   <body>
   <div class="container">
     <div class="row">
-      <h1>{{ var }}</h1>
+      <h1>Daily Plan</h1>
     </div> 
       <div class="row">
         <div class="col-md-3">
           <ul>
-            <li>Тек. задачи</li>
+          	{% for item in menu %}
+          		<li><a href="{{ path(item.link) }}">{{item.name}}</a></li>
+          	{% endfor %}          	
+          <!--   <li>Тек. задачи</li>
             <li>Планы</li>
             <li>Заметки</li>
             <li>Напоминания</li>
             <li>Отчеты</li>
+             -->
           </ul>
         </div>
       
-        <div class="col-md-6">Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.Сплошной текст.</div>
+        <div class="col-md-6">
+        <div id="tasks">
+        	{% for task in tasks %}        	
+        		<h3 class="accordion">{{task.getName()}}</h3>
+        		<div class="panel"><p>{{task.getDescription()}}</p></div>        	
+        	{% endfor %}	
+        </div>
+        </div>
         <div class="col-md-3">3</div>
       </div>
       <div class="row">
@@ -44,6 +56,6 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{{asset(')styles/js/bootstrap.min.js')}}"></script>
+    <script src="{{asset('styles/js/bootstrap.min.js')}}"></script>
   </body>
  {% endblock %}  

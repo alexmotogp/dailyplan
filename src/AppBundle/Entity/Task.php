@@ -21,7 +21,20 @@ class Task {
 	/**
 	 * @ORM\Column(type="text")
 	 */
-	private $desctiplion;
+	private $description;
+	/**
+	 * @ORM\Column(type="datetime")
+	 */
+	private $createData;
+	/**
+	 * @ORM\Column(type="datetime")
+	 */
+	private $executeData;
+	/**
+	 * @ORM\Column(type="datetime")
+	 */
+	private $finishData;
+	
 	//private $user;
 	
 	public function getName() {
@@ -33,11 +46,11 @@ class Task {
 	}
 	
 	public function getDescription() {
-		return $this->name;
+		return $this->description;
 	}
 	
 	public function setDescription($desc) {
-		$this->name = $desc;
+		$this->description = $desc;
 	}
 	
 	public function getId() {

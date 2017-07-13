@@ -25,11 +25,9 @@
       <div class="row">
         <div class="col-md-3">
           <ul>
-            <li>Тек. задачи</li>
-            <li>Планы</li>
-            <li>Заметки</li>
-            <li>Напоминания</li>
-            <li>Отчеты</li>
+          	{% for item in menu %}
+          		<li><a href="{{ path(item.link) }}">{{item.name}}</a></li>
+          	{% endfor %} 
           </ul>
         </div>
       
