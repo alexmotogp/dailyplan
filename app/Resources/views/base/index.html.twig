@@ -41,7 +41,13 @@
         <div class="col-md-6">
         <div id="tasks">
         	{% for task in tasks %}        	
-        		<h3 class="accordion">{{task.getName()}}</h3>
+        		<div class="accordion">
+        			<h3>{{task.getName()}}</h3>
+        			<span>К выполнению: {{task.getExecuteData().format('d.m.Y')}}</span>
+        			<a href="#">Вполнено</a>
+        			<a href="#">Изменить</a>
+        			<a href="#">Удалить</a>
+        		</div>
         		<div class="panel"><p>{{task.getDescription()}}</p></div>        	
         	{% endfor %}	
         </div>

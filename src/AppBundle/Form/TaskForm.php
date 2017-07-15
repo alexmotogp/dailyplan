@@ -11,7 +11,7 @@ class TaskForm extends AbstractType {
 		$builder
 			->add('name', null, array('label' => 'Задача:'))
 			->add('description', null, array('label' => 'Описание:'))
-			->add('executeData', DateType::class, array('label' => 'Дата:', 'widget' => 'single_text', 'placeholder' => 'sdf'))
+			->add('executeData', DateType::class, array('label' => 'Дата:', 'widget' => 'single_text'))
 			->add('submit', SubmitType::class, array('label' => 'Создать'));
 	}
 }

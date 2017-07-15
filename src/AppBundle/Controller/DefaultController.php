@@ -16,9 +16,13 @@ use AppBundle\Form\TaskForm;
 
 class DefaultController extends Controller
 {
-	private function getTasks() {
+	private function getTasks(\DateTime $date = null) {
 		$repository = $this->getDoctrine()->getRepository(Task::class);
-		$tasks = $repository->findAll();
+		if ($date === null) {
+			$tasks = $repository->findAll();
+		} else {	
+			$tasks = $repository->findBy(array('executeData' => $date));
+		}
 		return $tasks;
 	}
 	
@@ -34,7 +38,7 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {	
-    	$tasks = $this->getTasks();
+    	$tasks = $this->getTasks(new \DateTime());
     	$menu = $this->getMenu();
     	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu));
     }

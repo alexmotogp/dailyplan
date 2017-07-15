@@ -35,8 +35,6 @@ class Task {
 	private $executeData;
 	/**
 	 * @ORM\Column(type="datetime")
-	 * @Assert\NotBlank()
-	 * @Assert\Type("DateTime")
 	 */
 	private $finishData;
 	
