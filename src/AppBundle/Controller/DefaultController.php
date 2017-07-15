@@ -9,8 +9,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Menu;
+use AppBundle\Form\TaskForm;
 
 class DefaultController extends Controller
 {
@@ -31,12 +33,7 @@ class DefaultController extends Controller
      * @Route("/", name="homepage")
      */
     public function indexAction(Request $request)
-    {
-        // replace this example code with whatever you need
- /*        return $this->render('base/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]); */
-    	
+    {	
     	$tasks = $this->getTasks();
     	$menu = $this->getMenu();
     	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu));
@@ -57,19 +54,23 @@ class DefaultController extends Controller
      */
     public function newtaskAction(Request $request) {
     	
-    	$form = $this->createFormBuilder(null, array('action' => $this->generateUrl('newtask')))
-    	->add("Name", TextType::class)
-    	->add("Desc", TextareaType::class)
-    	->add("Exdate:", DateType::class)
-    	->getForm();
+    	$task = new Task();
+    	
+    	/* $form = $this->createFormBuilder($task, array('action' => $this->generateUrl('newtask')))
+    	->add("name", TextType::class)
+    	->add("description", TextareaType::class)
+    	->add("executeData", DateType::class)
+    	->add("submit", SubmitType::class, array('label' => "Создать"))
+    	->getForm(); */
+    	
+    	$form = $this->createForm(TaskForm::class, $task);
     	
     	$form->handleRequest($request);
     	
-    	if ($form->isSubmitted() && $form->isValid()) {
-    		$task = new Task();    		
+    	if ($form->isSubmitted() && $form->isValid()) {    		    	
     		$data = $form->getData();
-    		$task->setName($data['name']);
-    		$task->setDescription($data['desc']);
+    		$task->setCreateData(new \DateTime());  	
+    		$task->setFinishData(new \DateTime());	
     		$em = $this->getDoctrine()->getManager();
     		$em->persist($task);
     		$em->flush();

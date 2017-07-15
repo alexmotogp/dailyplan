@@ -2,6 +2,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -16,10 +17,12 @@ class Task {
 	private $id;
 	/**
 	 * @ORM\Column(type="string", length=255)
+	 * @Assert\NotBlank()
 	 */
 	private $name;
 	/**
 	 * @ORM\Column(type="text")
+	 * @Assert\NotBlank()
 	 */
 	private $description;
 	/**
@@ -32,6 +35,8 @@ class Task {
 	private $executeData;
 	/**
 	 * @ORM\Column(type="datetime")
+	 * @Assert\NotBlank()
+	 * @Assert\Type("DateTime")
 	 */
 	private $finishData;
 	
@@ -55,6 +60,30 @@ class Task {
 	
 	public function getId() {
 		return $this->id;
+	}
+	
+	public function getExecuteData() {
+		return $this->executeData;
+	}
+	
+	public function setExecuteData(\DateTime $date) {
+		$this->executeData = $date;
+	}
+	
+	public function getCreateData() {
+		return $this->createData;
+	}
+	
+	public function setCreateData(\DateTime $date) {
+		$this->createData = $date;
+	}
+	
+	public function getFinishData() {
+		return $this->finishData;
+	}
+	
+	public function setFinishData(\DateTime $date) {
+		$this->finishData = $date;
 	}
 	
 }
