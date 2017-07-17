@@ -16,12 +16,21 @@ use AppBundle\Form\TaskForm;
 
 class DefaultController extends Controller
 {
-	private function getTasks(\DateTime $date = null) {
+	private function getTasks($date = null) {
 		$repository = $this->getDoctrine()->getRepository(Task::class);
 		if ($date === null) {
 			$tasks = $repository->findAll();
 		} else {	
-			$tasks = $repository->findBy(array('executeData' => $date));
+			//$tasks = $repository->findBy(array('executeData' => $date));			
+			$em = $this->getDoctrine()->getManager();
+			$q = $em->createQuery(
+					'
+					SELECT t
+   					FROM AppBundle:Task t
+    				WHERE t.executeData BETWEEN :date AND :date1 
+					'
+					)->setParameters(array('date' => '1971-01-01 00:00:00', 'date1' => $date.' 23:59:59'));
+			$tasks = $q->getResult();
 		}
 		return $tasks;
 	}
@@ -38,8 +47,9 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {	
-    	$tasks = $this->getTasks(new \DateTime());
-    	$menu = $this->getMenu();
+    	$date = date('Y-m-d');    	
+    	$tasks = $this->getTasks($date);
+    	$menu = $this->getMenu();    	
     	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu));
     }
     
@@ -59,7 +69,7 @@ class DefaultController extends Controller
     public function newtaskAction(Request $request) {
     	
     	$task = new Task();
-    	
+    	$task->setExecuteData(new \DateTime());
     	/* $form = $this->createFormBuilder($task, array('action' => $this->generateUrl('newtask')))
     	->add("name", TextType::class)
     	->add("description", TextareaType::class)

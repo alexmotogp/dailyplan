@@ -8,3 +8,12 @@
 .panel {
 	display: none;
 }
+
+.taskdiv {
+	margin-top: 5px;
+	box-shadow: 3px 3px;	
+}
+
+#tasks {
+	border: 0px solid white;
+}
