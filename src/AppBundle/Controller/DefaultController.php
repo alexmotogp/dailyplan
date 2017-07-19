@@ -13,10 +13,13 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Menu;
 use AppBundle\Form\TaskForm;
+use AppBundle\Entity\AppBundle\Entity;
 
 class DefaultController extends Controller
 {
-	private function getTasks($date = null) {
+	private $contentHeader = "";
+	
+	private function getTasks($date = null, $executed = FALSE) {
 		$repository = $this->getDoctrine()->getRepository(Task::class);
 		if ($date === null) {
 			$tasks = $repository->findAll();
@@ -27,9 +30,10 @@ class DefaultController extends Controller
 					'
 					SELECT t
    					FROM AppBundle:Task t
-    				WHERE t.executeData BETWEEN :date AND :date1 
+    				WHERE t.executeData BETWEEN :date AND :date1
+					AND t.executed = :executed
 					'
-					)->setParameters(array('date' => '1971-01-01 00:00:00', 'date1' => $date.' 23:59:59'));
+					)->setParameters(array('date' => '1971-01-01 00:00:00', 'date1' => $date.' 23:59:59', 'executed' => $executed));
 			$tasks = $q->getResult();
 		}
 		return $tasks;
@@ -43,24 +47,43 @@ class DefaultController extends Controller
 	}
 	
     /**
-     * @Route("/", name="homepage")
+     * @Route("/{type}", name="homepage", requirements={"type":"actual|exec|all"})
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, $type = 'actual')
     {	
     	$date = date('Y-m-d');    	
-    	$tasks = $this->getTasks($date);
-    	$menu = $this->getMenu();    	
-    	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu));
+    	//$tasks = $this->getTasks($date);
+    	if($type == 'actual') {
+    		$this->contentHeader = "Актуальные";
+    		$tasks = $this->getTasks($date, FALSE);
+    	} elseif ($type == 'exec') {
+    		$this->contentHeader = "Выполненные";
+    		$tasks = $this->getTasks($date, TRUE);
+    	} elseif ($type == 'all') {
+    		$this->contentHeader = "Все";
+    		$tasks = $this->getTasks($date);
+    	}
+    	$menu = $this->getMenu();   	
+    	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu, 'contentHeader' => $this->contentHeader));
     }
     
     /**
-     * @Route("/tasks", name="tasks")
+     * @Route("/tasks/{type}", name="tasks")
      */
-    public function tasksAction(Request $request)
-    {
-    	$tasks = $this->getTasks(); 
+    public function tasksAction(Request $request, $type = 'actual')
+    {    	
     	$menu = $this->getMenu();
-    	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu));
+    	if($type == 'actual') {
+    		$this->contentHeader = "Актуальные";
+    		$tasks = $this->getTasks(null, 'FALSE');
+    	} elseif ($type == 'exec') {
+    		$this->contentHeader = "Выполненные";
+    		$tasks = $this->getTasks(null, 'TRUE');
+    	} elseif ($type == 'all') {
+    		$this->contentHeader = "Все";
+    		$tasks = $this->getTasks();
+    	}
+    	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu, 'contentHeader' => $this->contentHeader));
     }
     
     /**
@@ -70,12 +93,6 @@ class DefaultController extends Controller
     	
     	$task = new Task();
     	$task->setExecuteData(new \DateTime());
-    	/* $form = $this->createFormBuilder($task, array('action' => $this->generateUrl('newtask')))
-    	->add("name", TextType::class)
-    	->add("description", TextareaType::class)
-    	->add("executeData", DateType::class)
-    	->add("submit", SubmitType::class, array('label' => "Создать"))
-    	->getForm(); */
     	
     	$form = $this->createForm(TaskForm::class, $task);
     	
@@ -84,7 +101,7 @@ class DefaultController extends Controller
     	if ($form->isSubmitted() && $form->isValid()) {    		    	
     		$data = $form->getData();
     		$task->setCreateData(new \DateTime());  	
-    		$task->setFinishData(new \DateTime());	
+    		$task->setExecuted(false);
     		$em = $this->getDoctrine()->getManager();
     		$em->persist($task);
     		$em->flush();
@@ -94,5 +111,23 @@ class DefaultController extends Controller
     	
     	$menu = $this->getMenu();
     	return $this->render('base/newtask.html.twig', array('form' => $form->createView(), 'menu' => $menu));
+    }
+    
+    /**
+     *@Route("/update/{id}", name="update") 
+     */
+    public function updateTaskAction(Request $request, $id) {    	
+    	$em = $this->getDoctrine()->getManager();
+    	$task = $em->getRepository(Task::class)->find($id);
+    	
+    	if(!$task) {
+    		throw $this->createNotFoundException('No task with id:'.$id);
+    	}
+    	
+    	$task->setFinishData(new \DateTime());
+    	$task->setExecuted(true);
+    	$em->flush();
+    	
+    	return $this->redirectToRoute('homepage');
     }
 }

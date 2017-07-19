@@ -3,6 +3,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\DBAL\Types\BooleanType;
 
 /**
  * @ORM\Entity
@@ -37,6 +38,11 @@ class Task {
 	 * @ORM\Column(type="datetime")
 	 */
 	private $finishData;
+	
+	/**
+	 * @ORM\Column(type="boolean")
+	 */
+	private $executed;
 	
 	//private $user;
 	
@@ -84,6 +90,13 @@ class Task {
 		$this->finishData = $date;
 	}
 	
+	public function getExecuted() {
+		return $this->executed;
+	}
+	
+	public function setExecuted($exec) {
+		$this->executed = $exec;
+	}
 }
 
 
