@@ -130,4 +130,46 @@ class DefaultController extends Controller
     	
     	return $this->redirectToRoute('homepage');
     }
+    
+    /**
+     *@Route("/del-task/{id}", name="del-task")
+     */
+    public function delTaskAction($id) {
+    	$em = $this->getDoctrine()->getManager();
+    	$task = $em->getRepository(Task::class)->find($id);
+    	 
+    	if(!$task) {
+    		throw $this->createNotFoundException('No task with id:'.$id);
+    	}
+    	
+    	$em->remove($task);
+    	$em->flush();
+    	
+    	return $this->redirectToRoute('homepage');
+    }
+    
+    /**
+     *@Route("/edit-task/{id}", name="edit-task")
+     */
+    public function editTaskAction($id) {
+    	$em = $this->getDoctrine()->getManager();
+    	$task = $em->getRepository(Task::class)->find($id);
+    	$form = $this->createForm(TaskForm::class, $task);
+    	
+    	$form->handleRequest($request);
+    	 
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$data = $form->getData();
+    		$task->setCreateData(new \DateTime());
+    		$task->setExecuted(false);
+    		$em = $this->getDoctrine()->getManager();
+    		$em->persist($task);
+    		$em->flush();
+    	
+    		return $this->redirectToRoute('tasks');
+    	}
+    	 
+    	$menu = $this->getMenu();
+    	return $this->render('base/newtask.html.twig', array('form' => $form->createView(), 'menu' => $menu));
+    }
 }
