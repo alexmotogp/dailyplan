@@ -14,6 +14,8 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Menu;
 use AppBundle\Form\TaskForm;
 use AppBundle\Entity\AppBundle\Entity;
+use AppBundle\Form\ReportForm;
+
 
 class DefaultController extends Controller
 {
@@ -39,6 +41,52 @@ class DefaultController extends Controller
 		return $tasks;
 	}
 	
+	private function getAllTasks() {
+		$repository = $this->getDoctrine()->getRepository(Task::class);
+		$tasks = $repository->findAll();
+		return $tasks;
+	}
+	
+	/**
+	 * @param string $dateFrom Date from
+	 * @param string $dateTo Date to
+	 * @param const $executed Can be All|Executed|NoExecuted
+	 * @return array of Tasks
+	 */
+	private function getTasksBetweenDate($dateFrom, $dateTo, $executed = ExecutedEnum::All)
+	{
+		if ($dateFrom == null) {
+			$dateFrom = '1971-01-01 00:00:00';
+		}
+		if ($dateTo == null) {
+			throw $this->createNotFoundException('No found tasks in this ranges');
+		}
+		$repository = $this->getDoctrine()->getRepository(Task::class);
+		$em = $this->getDoctrine()->getManager();
+		$qText = '  SELECT t
+   					FROM AppBundle:Task t
+    				WHERE t.executeData BETWEEN :date1 AND :date2';							
+		$params = array(
+				'date1' => $dateFrom,
+				'date2' => $dateTo.' 23:59:59',
+		);
+		if ($executed !== ExecutedEnum::All) {
+			$qText = $qText.' AND t.executed = :executed';
+			$params['executed'] = $executed;			
+		}
+		$q = $em->createQuery($qText)->setParameters($params);
+		$tasks = $q->getResult();
+		return $tasks;
+	}
+	
+	private function getTaskById($id) {
+		if ($id == null) {
+			throw $this->createNotFoundException('No found tasks in this ranges');
+		}
+		$repository = $this->getDoctrine()->getRepository(Task::class);		
+		$tasks = $repository->find($id);
+	}
+	
 	private function getMenu()
 	{
 		$repository = $this->getDoctrine()->getRepository(Menu::class);
@@ -52,16 +100,15 @@ class DefaultController extends Controller
     public function indexAction(Request $request, $type = 'actual')
     {	
     	$date = date('Y-m-d');    	
-    	//$tasks = $this->getTasks($date);
     	if($type == 'actual') {
     		$this->contentHeader = "Актуальные";
-    		$tasks = $this->getTasks($date, FALSE);
+    		$tasks = $this->getTasksBetweenDate(null, $date, ExecutedEnum::NoExecuted);
     	} elseif ($type == 'exec') {
     		$this->contentHeader = "Выполненные";
-    		$tasks = $this->getTasks($date, TRUE);
+    		$tasks = $this->getTasksBetweenDate(null, $date, ExecutedEnum::Executed);
     	} elseif ($type == 'all') {
     		$this->contentHeader = "Все";
-    		$tasks = $this->getTasks($date);
+    		$tasks = $this->getTasksBetweenDate(null, $date);
     	}
     	$menu = $this->getMenu();   	
     	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu, 'contentHeader' => $this->contentHeader));
@@ -171,5 +218,24 @@ class DefaultController extends Controller
     	 
     	$menu = $this->getMenu();
     	return $this->render('base/newtask.html.twig', array('form' => $form->createView(), 'menu' => $menu));
+    }
+    
+    /**
+     * @Route("/report", name="report")
+     */
+    public function reportAction(Request $request) {
+    	$form = $this->createForm(ReportForm::class);
+    	$menu = $this->getMenu();
+    	
+    	$form->handleRequest($request);
+    	
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$data = $form->getData();
+    		$tasks = $this->getTasksBetweenDate($data['DateFrom']->format('Y-m-d'), $data['DateTo']->format('Y-m-d'), $data['isExecuted']);
+    	} else {
+    		$tasks = null;
+    	}
+    	
+    	return $this->render('base/report.html.twig', array('form' => $form->createView(), 'menu' => $menu, 'tasks' => $tasks));
     }
 }

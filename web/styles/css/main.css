@@ -4,5 +4,9 @@
 }
 
 div {
-	border: 50px solid #000;
+	border: 1px solid #000;
+}
+
+.exec_task {
+	background-color: gray;
 }

@@ -21,46 +21,46 @@
   <body>
   <div class="container">
     <div class="row">
-      <h1>Daily Plan</h1>
+      <h1>Отчет</h1>
     </div> 
       <div class="row">
         <div class="col-md-3">
           <ul>
           	{% for item in menu %}
           		<li><a href="{{ path(item.link) }}">{{item.name}}</a></li>
-          	{% endfor %}          	
-          <!--   <li>Тек. задачи</li>
-            <li>Планы</li>
-            <li>Заметки</li>
-            <li>Напоминания</li>
-            <li>Отчеты</li>
-             -->
+          	{% endfor %} 
           </ul>
         </div>
       
         <div class="col-md-6">
-        <h2>{{ contentHeader }} <span>{{ tasks|length }}</span> </h2>
-        <p><a href="{{path('homepage', {'type' : 'actual'})}}" class="atab">Актуальные</a>
-           <a href="{{path('homepage', {'type' : 'exec'})}}" class="atab">Выполненные</a>
-           <a href="{{path('homepage', {'type' : 'all'})}}" class="atab">Все</a></p>
-        <div id="tasks">
-        	{% for task in tasks %} 
-        		<div class="taskdiv">   
-        			{% if task.getExecuted() %}
-        				<div class="accordion exec_task">
-        			{% else %}    	
-	        			<div class="accordion">
-	        		{% endif %}	
-	        			<h3>{{task.getName()}}</h3>
-	        			<span>К выполнению: {{task.getExecuteData().format('d.m.Y')}}</span>
-	        			<a href="{{path('update', {'id':task.getId()})}}">Выполнено</a>
-	        			<a href="{{path('edit-task', {'id':task.getId()})}}">Изменить</a>
-	        			<a href="{{path('del-task', {'id':task.getId()})}}">Удалить</a>
-	        		</div>
-	        		<div class="panel"><p>{{task.getDescription()}}</p></div>    
-        		</div>    	
-        	{% endfor %}	
-        </div>
+        	<h3>Отчет по заданиям</h3>
+        	<div>
+	        	{{ form_start(form) }}
+	        	{{ form_widget(form) }}	
+	        	{{ form_end(form) }}
+        	</div>
+
+       		{% if tasks != null %}
+       			<p>Всего результатов: {{tasks|length}}</p>
+        		<div id="tasks">
+		        	{% for task in tasks %} 
+		        		<div class="taskdiv">   
+		        			{% if task.getExecuted() %}
+		        				<div class="accordion exec_task">
+		        			{% else %}    	
+			        			<div class="accordion">
+			        		{% endif %}	
+			        			<h3>{{task.getName()}}</h3>
+			        			<span>К выполнению: {{task.getExecuteData().format('d.m.Y')}}</span>
+			        			<a href="{{path('update', {'id':task.getId()})}}">Выполнено</a>
+			        			<a href="{{path('edit-task', {'id':task.getId()})}}">Изменить</a>
+			        			<a href="{{path('del-task', {'id':task.getId()})}}">Удалить</a>
+			        		</div>
+			        		<div class="panel"><p>{{task.getDescription()}}</p></div>    
+		        		</div>    	
+		        	{% endfor %}	
+		        </div>
+        		{% endif %}
         </div>
         <div class="col-md-3">3</div>
       </div>
