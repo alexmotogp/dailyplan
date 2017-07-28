@@ -26,9 +26,11 @@
       <div class="row">
         <div class="col-md-3">
           <ul>
-          	{% for item in menu %}
-          		<li><a href="{{ path(item.link) }}">{{item.name}}</a></li>
-          	{% endfor %}          	
+          	   
+          	
+          	{{ dp_menu() }}      
+          	
+          	{{ render(controller('AppBundle:Menu:getMenu')) }}	
           <!--   <li>Тек. задачи</li>
             <li>Планы</li>
             <li>Заметки</li>
@@ -62,7 +64,9 @@
         	{% endfor %}	
         </div>
         </div>
-        <div class="col-md-3">3</div>
+        <div class="col-md-3">
+        	{{ render(controller('AppBundle:Notice:addNotice')) }}
+        </div>
       </div>
       <div class="row">
         <h3>Footer</h3>

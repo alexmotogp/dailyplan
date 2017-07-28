@@ -6,14 +6,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Menu;
 use AppBundle\Form\TaskForm;
-use AppBundle\Entity\AppBundle\Entity;
+use AppBundle\Entity;
 use AppBundle\Form\ReportForm;
 
 
@@ -110,8 +106,8 @@ class DefaultController extends Controller
     		$this->contentHeader = "Все";
     		$tasks = $this->getTasksBetweenDate(null, $date);
     	}
-    	$menu = $this->getMenu();   	
-    	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu, 'contentHeader' => $this->contentHeader));
+    	  	
+    	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'contentHeader' => $this->contentHeader));
     }
     
     /**
@@ -119,7 +115,6 @@ class DefaultController extends Controller
      */
     public function tasksAction(Request $request, $type = 'actual')
     {    	
-    	$menu = $this->getMenu();
     	if($type == 'actual') {
     		$this->contentHeader = "Актуальные";
     		$tasks = $this->getTasks(null, 'FALSE');
@@ -130,7 +125,7 @@ class DefaultController extends Controller
     		$this->contentHeader = "Все";
     		$tasks = $this->getTasks();
     	}
-    	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'menu' => $menu, 'contentHeader' => $this->contentHeader));
+    	return $this->render('base/index.html.twig', array('tasks' => $tasks, 'contentHeader' => $this->contentHeader));
     }
     
     /**
@@ -155,9 +150,8 @@ class DefaultController extends Controller
     		
     		return $this->redirectToRoute('tasks');
     	}
-    	
-    	$menu = $this->getMenu();
-    	return $this->render('base/newtask.html.twig', array('form' => $form->createView(), 'menu' => $menu));
+    	    	
+    	return $this->render('base/newtask.html.twig', array('form' => $form->createView()));
     }
     
     /**
@@ -198,7 +192,7 @@ class DefaultController extends Controller
     /**
      *@Route("/edit-task/{id}", name="edit-task")
      */
-    public function editTaskAction($id) {
+    public function editTaskAction(Request $request, $id) {
     	$em = $this->getDoctrine()->getManager();
     	$task = $em->getRepository(Task::class)->find($id);
     	$form = $this->createForm(TaskForm::class, $task);
@@ -217,7 +211,7 @@ class DefaultController extends Controller
     	}
     	 
     	$menu = $this->getMenu();
-    	return $this->render('base/newtask.html.twig', array('form' => $form->createView(), 'menu' => $menu));
+    	return $this->render('base/newtask.html.twig', array('form' => $form->createView()));
     }
     
     /**
@@ -236,6 +230,6 @@ class DefaultController extends Controller
     		$tasks = null;
     	}
     	
-    	return $this->render('base/report.html.twig', array('form' => $form->createView(), 'menu' => $menu, 'tasks' => $tasks));
+    	return $this->render('base/report.html.twig', array('form' => $form->createView(), 'tasks' => $tasks));
     }
 }
