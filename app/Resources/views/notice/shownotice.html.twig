@@ -1,0 +1,8 @@
+<div>
+    {% for notice in notices %}
+		<div class = "notice">
+			<p>{{ notice.getNotice() }}</p>
+			<p><a href = "{{ path('del-notice', {'id':notice.getId()}) }}">Удалить</a></p>
+		</div>
+    {% endfor %}
+</div>

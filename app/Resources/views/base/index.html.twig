@@ -22,6 +22,7 @@
   <div class="container">
     <div class="row">
       <h1>Daily Plan</h1>
+      <p><a href = "{{ path('logout') }}">Выйти</a></p>
     </div> 
       <div class="row">
         <div class="col-md-3">
@@ -66,6 +67,7 @@
         </div>
         <div class="col-md-3">
         	{{ render(controller('AppBundle:Notice:addNotice')) }}
+        	{{ render(controller('AppBundle:Notice:showNotices')) }}
         </div>
       </div>
       <div class="row">
