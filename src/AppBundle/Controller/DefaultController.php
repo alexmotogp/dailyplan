@@ -83,12 +83,12 @@ class DefaultController extends Controller
 		$tasks = $repository->find($id);
 	}
 	
-	private function getMenu()
+	/* private function getMenu()
 	{
 		$repository = $this->getDoctrine()->getRepository(Menu::class);
 		$menu = $repository->findAll();
 		return $menu;
-	}
+	} */
 	
     /**
      * @Route("/{type}", name="homepage", requirements={"type":"actual|exec|all"})
@@ -210,7 +210,6 @@ class DefaultController extends Controller
     		return $this->redirectToRoute('tasks');
     	}
     	 
-    	$menu = $this->getMenu();
     	return $this->render('base/newtask.html.twig', array('form' => $form->createView()));
     }
     
@@ -219,7 +218,6 @@ class DefaultController extends Controller
      */
     public function reportAction(Request $request) {
     	$form = $this->createForm(ReportForm::class);
-    	$menu = $this->getMenu();
     	
     	$form->handleRequest($request);
     	
