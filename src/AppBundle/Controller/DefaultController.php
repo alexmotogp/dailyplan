@@ -46,7 +46,7 @@ class DefaultController extends Controller
 	/**
 	 * @param string $dateFrom Date from
 	 * @param string $dateTo Date to
-	 * @param const $executed Can be All|Executed|NoExecuted
+	 * @param ExecutedEnum $executed Can be All|Executed|NoExecuted
 	 * @return array of Tasks
 	 */
 	private function getTasksBetweenDate($dateFrom, $dateTo, $executed = ExecutedEnum::All)
@@ -144,11 +144,12 @@ class DefaultController extends Controller
     		$data = $form->getData();
     		$task->setCreateData(new \DateTime());  	
     		$task->setExecuted(false);
+    		$task->setUser($this->getUser());
     		$em = $this->getDoctrine()->getManager();
     		$em->persist($task);
     		$em->flush();
     		
-    		return $this->redirectToRoute('tasks');
+    		return $this->redirectToRoute('homepage');
     	}
     	    	
     	return $this->render('base/newtask.html.twig', array('form' => $form->createView()));
@@ -203,11 +204,12 @@ class DefaultController extends Controller
     		$data = $form->getData();
     		$task->setCreateData(new \DateTime());
     		$task->setExecuted(false);
+    		$task->setUser($this->getUser());
     		$em = $this->getDoctrine()->getManager();
     		$em->persist($task);
     		$em->flush();
     	
-    		return $this->redirectToRoute('tasks');
+    		return $this->redirectToRoute('homepage');
     	}
     	 
     	return $this->render('base/newtask.html.twig', array('form' => $form->createView()));

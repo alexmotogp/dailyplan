@@ -52,4 +52,9 @@ class Menu {
 	public function setIsActive($isActive) {
 		$this->isActive = $isActive;
 	}
+	
+	public function getId()
+	{
+	    return $this->id;
+	}
 }

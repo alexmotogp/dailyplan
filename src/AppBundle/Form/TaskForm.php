@@ -5,6 +5,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class TaskForm extends AbstractType {
 	public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -26,6 +27,15 @@ class TaskForm extends AbstractType {
 					'attr' => array(
 							'class' => 'form-control'
 					)		
+			))
+			->add('category', EntityType::class, array(
+			    'label' => 'Категория',
+			    'class' => 'AppBundle:Category',
+			    'choice_label' => 'name',
+			    'placeholder' => 'Выберите категорию',
+			    'attr' => array(
+			        'class' => 'form-control'
+			    )
 			))
 			->add('submit', SubmitType::class, array(
 					'label' => 'Создать',

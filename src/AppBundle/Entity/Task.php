@@ -44,7 +44,51 @@ class Task {
 	 */
 	private $executed;
 	
-	//private $user;
+	/**
+	 *  @ORM\ManyToOne(targetEntity="Category", inversedBy="task")
+	 *  @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+	 */
+	private $category;
+	
+	/**
+	 *  @ORM\ManyToOne(targetEntity="User", inversedBy="tasks")
+	 *  @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+	 */
+	private $user;
+	
+	/**
+     * @return User $user
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @return Category $category
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param Category $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
+
+    //private $user;
 	
 	public function getName() {
 		return $this->name;

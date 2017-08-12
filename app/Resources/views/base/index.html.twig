@@ -55,6 +55,7 @@
 	        			<div class="accordion">
 	        		{% endif %}	
 	        			<h3>{{task.getName()}}</h3>
+	        			<p>Группа: {{ task.getCategory() }}</p>
 	        			<span>К выполнению: {{task.getExecuteData().format('d.m.Y')}}</span>
 	        			<a href="{{path('update', {'id':task.getId()})}}">Выполнено</a>
 	        			<a href="{{path('edit-task', {'id':task.getId()})}}">Изменить</a>
